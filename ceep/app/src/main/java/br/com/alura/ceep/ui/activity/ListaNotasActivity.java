@@ -20,31 +20,23 @@ import br.com.alura.ceep.util.PreferencesUtil;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.List;
-
-import br.com.alura.ceep.R;
-import br.com.alura.ceep.dao.NotaDAO;
-import br.com.alura.ceep.model.Nota;
-import br.com.alura.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
-import br.com.alura.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
-import br.com.alura.ceep.ui.recyclerview.helper.callback.NotaItemTouchHelperCallback;
-
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.CODIGO_REQUISICAO_INSERE_NOTA;
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
+import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
 public class ListaNotasActivity extends AppCompatActivity {
 
     private ListaNotasAdapter adapter;
+    private ListaNotasLayoutView layoutView;
+    private PreferencesUtil preferencesUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +47,84 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         setTitle(R.string.notas);
 
+        preferencesUtil = PreferencesUtil.getInstance(getApplication());
+
+        layoutView = preferencesUtil.getListaNotasLayoutView();
+
+        if (layoutView == null) {
+
+            layoutView = ListaNotasLayoutView.LIST;
+        }
+
         List<Nota> todasNotas = pegaTodasNotas();
         configuraRecyclerView(todasNotas);
         configuraBotaoInsereNota();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_lista_notas, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem menuItem = null;
+
+        switch (layoutView) {
+            case LIST:
+                menuItem = menu.findItem(R.id.menu_lista_notas_ic_list);
+                break;
+            case GRID:
+                menuItem = menu.findItem(R.id.menu_lista_notas_ic_grid);
+                break;
+        }
+
+        if (menuItem != null) {
+
+            menuItem.setVisible(false);
+
+            return true;
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        ListaNotasLayoutView layoutView = null;
+
+        if (item.getItemId() == R.id.menu_lista_notas_ic_grid) {
+
+            layoutView = ListaNotasLayoutView.GRID;
+        } else if (item.getItemId() == R.id.menu_lista_notas_ic_list) {
+
+            layoutView = ListaNotasLayoutView.LIST;
+        }
+
+        if (layoutView != null) {
+
+            this.layoutView = layoutView;
+
+            atualizaListaNotasLayoutView();
+
+            configuraListaNotasRecyclerViewLayoutManager();
+
+            invalidateOptionsMenu();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void atualizaListaNotasLayoutView() {
+
+        preferencesUtil.insere(this.layoutView);
     }
 
     private void configuraBotaoInsereNota() {
@@ -167,6 +234,7 @@ public class ListaNotasActivity extends AppCompatActivity {
         RecyclerView listaNotas = findViewById(R.id.lista_notas_recyclerview);
         configuraAdapter(todasNotas, listaNotas);
         configuraItemTouchHelper(listaNotas);
+        configuraListaNotasRecyclerViewLayoutManager(listaNotas);
     }
 
     private void configuraItemTouchHelper(RecyclerView listaNotas) {
@@ -178,7 +246,6 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
 
         adapter = new ListaNotasAdapter(this, todasNotas);
-        listaNotas.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(Nota nota, int posicao) {
@@ -186,6 +253,30 @@ public class ListaNotasActivity extends AppCompatActivity {
                 vaiParaFormularioNotaActivityAltera(nota, posicao);
             }
         });
+
+        listaNotas.setAdapter(adapter);
+    }
+
+    private void configuraListaNotasRecyclerViewLayoutManager() {
+
+        RecyclerView listaNotas = findViewById(R.id.lista_notas_recyclerview);
+        configuraListaNotasRecyclerViewLayoutManager(listaNotas);
+    }
+
+    private void configuraListaNotasRecyclerViewLayoutManager(RecyclerView listaNotas) {
+
+        LayoutManager layoutManager = null;
+
+        switch (layoutView) {
+            case LIST:
+                layoutManager = new LinearLayoutManager(this);
+                break;
+            case GRID:
+                layoutManager = new GridLayoutManager(this, 2);
+                break;
+        }
+
+        listaNotas.setLayoutManager(layoutManager);
     }
 
     private void vaiParaFormularioNotaActivityAltera(Nota nota, int posicao) {

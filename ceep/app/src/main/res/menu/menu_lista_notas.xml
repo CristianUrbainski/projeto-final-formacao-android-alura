@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_lista_notas_ic_grid"
+        android:title="@string/visualizar_layout_grid"
+        android:icon="@drawable/ic_action_grid"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/menu_lista_notas_ic_list"
+            android:title="@string/visualizar_layout_lista"
+            android:icon="@drawable/ic_action_lista"
+            app:showAsAction="always"/>
+
+</menu>
