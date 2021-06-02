@@ -1,5 +1,7 @@
 package br.com.alura.ceep.util;
 
+import br.com.alura.ceep.ui.enumerator.ListaNotasViewLayoutEnum;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,8 +14,8 @@ import androidx.annotation.NonNull;
  */
 public final class PreferencesUtil {
 
-    private static String PREFERENCES_NAME = "ceep-preferences";
-    private static String PREFERENCE_LISTA_NOTAS_LAYOUT = "lista-notas-layout";
+    private static final String PREFERENCES_NAME = "ceep-preferences";
+    private static final String PREFERENCE_LISTA_NOTAS_LAYOUT = "lista-notas-layout";
     private final SharedPreferences preferences;
     private static PreferencesUtil INSTACE;
 
@@ -22,7 +24,7 @@ public final class PreferencesUtil {
         this.preferences = application.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
-    public void insere(@NonNull ListaNotasLayoutView layoutView) {
+    public void insere(@NonNull ListaNotasViewLayoutEnum layoutView) {
 
         Editor editor = this.preferences.edit();
 
@@ -31,7 +33,7 @@ public final class PreferencesUtil {
         editor.apply();
     }
 
-    public ListaNotasLayoutView getListaNotasLayoutView() {
+    public ListaNotasViewLayoutEnum getListaNotasLayoutView() {
 
         int pref = this.preferences.getInt(PREFERENCE_LISTA_NOTAS_LAYOUT, -1);
 
@@ -40,7 +42,7 @@ public final class PreferencesUtil {
             return null;
         }
 
-        for (ListaNotasLayoutView listaNotasLayoutView : ListaNotasLayoutView.values()) {
+        for (ListaNotasViewLayoutEnum listaNotasLayoutView : ListaNotasViewLayoutEnum.values()) {
 
             if (listaNotasLayoutView.ordinal() == pref) {
 

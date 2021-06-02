@@ -14,7 +14,7 @@ import br.com.alura.ceep.model.Nota;
 import br.com.alura.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.alura.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 import br.com.alura.ceep.ui.recyclerview.helper.callback.NotaItemTouchHelperCallback;
-import br.com.alura.ceep.util.ListaNotasLayoutView;
+import br.com.alura.ceep.ui.enumerator.ListaNotasViewLayoutEnum;
 import br.com.alura.ceep.util.PreferencesUtil;
 
 import android.app.Activity;
@@ -35,7 +35,7 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 public class ListaNotasActivity extends AppCompatActivity {
 
     private ListaNotasAdapter adapter;
-    private ListaNotasLayoutView layoutView;
+    private ListaNotasViewLayoutEnum layoutView;
     private PreferencesUtil preferencesUtil;
 
     @Override
@@ -53,7 +53,7 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         if (layoutView == null) {
 
-            layoutView = ListaNotasLayoutView.LIST;
+            layoutView = ListaNotasViewLayoutEnum.LIST;
         }
 
         List<Nota> todasNotas = pegaTodasNotas();
@@ -96,14 +96,14 @@ public class ListaNotasActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        ListaNotasLayoutView layoutView = null;
+        ListaNotasViewLayoutEnum layoutView = null;
 
         if (item.getItemId() == R.id.menu_lista_notas_ic_grid) {
 
-            layoutView = ListaNotasLayoutView.GRID;
+            layoutView = ListaNotasViewLayoutEnum.GRID;
         } else if (item.getItemId() == R.id.menu_lista_notas_ic_list) {
 
-            layoutView = ListaNotasLayoutView.LIST;
+            layoutView = ListaNotasViewLayoutEnum.LIST;
         }
 
         if (layoutView != null) {
