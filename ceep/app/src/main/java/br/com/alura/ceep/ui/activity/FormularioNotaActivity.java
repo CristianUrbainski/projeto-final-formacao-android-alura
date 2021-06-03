@@ -6,29 +6,37 @@ import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.POSICAO_INVAL
 
 import br.com.alura.ceep.R;
 import br.com.alura.ceep.model.Nota;
+import br.com.alura.ceep.ui.enumerator.ColorEnum;
+import br.com.alura.ceep.ui.recyclerview.adapter.ListaColorAdapter;
+import br.com.alura.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class FormularioNotaActivity extends AppCompatActivity {
 
     private int posicaoRecibida = POSICAO_INVALIDA;
+    private Nota nota;
     private TextView titulo;
     private TextView descricao;
+    private RecyclerView color;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_formulario_nota);
 
         setTitle(R.string.insere_nota);
+
         inicializaCampos();
 
         Intent dadosRecebidos = getIntent();
@@ -37,28 +45,23 @@ public class FormularioNotaActivity extends AppCompatActivity {
 
             setTitle(R.string.altera_nota);
 
-            Nota notaRecebida = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
+            nota = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
+
             posicaoRecibida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
-            preencheCampos(notaRecebida);
+
+        } else {
+
+            nota = new Nota();
         }
-    }
 
-    private void preencheCampos(Nota notaRecebida) {
-
-        titulo.setText(notaRecebida.getTitulo());
-        descricao.setText(notaRecebida.getDescricao());
-    }
-
-    private void inicializaCampos() {
-
-        titulo = findViewById(R.id.formulario_nota_titulo);
-        descricao = findViewById(R.id.formulario_nota_descricao);
+        preencheCampos();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_formulario_nota_salva, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -66,29 +69,78 @@ public class FormularioNotaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (ehMenuSalvaNota(item)) {
-            Nota notaCriada = criaNota();
-            retornaNota(notaCriada);
+
+            atualizarDadosNota();
+
+            retornaNota();
+
             finish();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void retornaNota(Nota nota) {
+    private void preencheCampos() {
+
+        titulo.setText(nota.getTitulo());
+
+        descricao.setText(nota.getDescricao());
+
+        changeBackgroundColor();
+    }
+
+    private void inicializaCampos() {
+
+        titulo = findViewById(R.id.formulario_nota_titulo);
+        descricao = findViewById(R.id.formulario_nota_descricao);
+        color = findViewById(R.id.formulario_nota_color);
+
+        configuraColorRecyclerView();
+    }
+
+    private void configuraColorRecyclerView() {
+
+        final ListaColorAdapter coresAdapter = new ListaColorAdapter(this);
+
+        coresAdapter.setOnItemClickListener(new OnItemClickListener<ColorEnum>() {
+            @Override
+            public void onItemClick(ColorEnum colorEnum, int posicao) {
+
+                nota.setColor(colorEnum);
+
+                changeBackgroundColor();
+            }
+        });
+
+        color.setAdapter(coresAdapter);
+    }
+
+    private void retornaNota() {
 
         Intent resultadoInsercao = new Intent();
         resultadoInsercao.putExtra(CHAVE_NOTA, nota);
         resultadoInsercao.putExtra(CHAVE_POSICAO, posicaoRecibida);
+
         setResult(Activity.RESULT_OK, resultadoInsercao);
     }
 
-    @NonNull
-    private Nota criaNota() {
+    private void changeBackgroundColor() {
 
-        return new Nota(titulo.getText().toString(), descricao.getText().toString());
+        View rootView = getWindow().getDecorView().getRootView();
+
+        rootView.setBackgroundColor(getResources().getColor(nota.getColor().getColorRes()));
+    }
+
+    private void atualizarDadosNota() {
+
+        nota.setTitulo(titulo.getText().toString());
+
+        nota.setDescricao(descricao.getText().toString());
     }
 
     private boolean ehMenuSalvaNota(MenuItem item) {
 
         return item.getItemId() == R.id.menu_formulario_nota_ic_salva;
     }
+
 }

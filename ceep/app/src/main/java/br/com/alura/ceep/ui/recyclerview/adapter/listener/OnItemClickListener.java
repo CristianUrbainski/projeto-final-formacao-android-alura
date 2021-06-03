@@ -1,8 +1,6 @@
 package br.com.alura.ceep.ui.recyclerview.adapter.listener;
 
-import br.com.alura.ceep.model.Nota;
+public interface OnItemClickListener<T> {
 
-public interface OnItemClickListener {
-
-    void onItemClick(Nota nota, int posicao);
+    void onItemClick(T obj, int posicao);
 }
