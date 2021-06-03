@@ -18,6 +18,7 @@ import br.com.alura.ceep.ui.recyclerview.helper.callback.NotaItemTouchHelperCall
 import br.com.alura.ceep.util.PreferencesUtil;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -285,6 +286,12 @@ public class ListaNotasActivity extends AppCompatActivity {
         abreFormularioComNota.putExtra(CHAVE_NOTA, nota);
         abreFormularioComNota.putExtra(CHAVE_POSICAO, posicao);
         startActivityForResult(abreFormularioComNota, CODIGO_REQUISICAO_ALTERA_NOTA);
+    }
+
+    public static void newInstace(Context context) {
+
+        Intent intent = new Intent(context, ListaNotasActivity.class);
+        context.startActivity(intent);
     }
 
 }

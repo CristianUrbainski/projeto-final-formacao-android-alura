@@ -16,6 +16,7 @@ public final class PreferencesUtil {
 
     private static final String PREFERENCES_NAME = "ceep-preferences";
     private static final String PREFERENCE_LISTA_NOTAS_LAYOUT = "lista-notas-layout";
+    private static final String PREFERENCE_PRIMEIRA_EXECUCAO_APP = "app-primeira-execucao";
     private final SharedPreferences preferences;
     private static PreferencesUtil INSTACE;
 
@@ -51,6 +52,20 @@ public final class PreferencesUtil {
         }
 
         return null;
+    }
+
+    public boolean isPrimeiraExecucaoApp() {
+
+        return this.preferences.getBoolean(PREFERENCE_PRIMEIRA_EXECUCAO_APP, true);
+    }
+
+    public void setAppJaExecutado() {
+
+        Editor editor = this.preferences.edit();
+
+        editor.putBoolean(PREFERENCE_PRIMEIRA_EXECUCAO_APP, false);
+
+        editor.apply();
     }
 
     public static PreferencesUtil getInstance(@NonNull Application application) {
