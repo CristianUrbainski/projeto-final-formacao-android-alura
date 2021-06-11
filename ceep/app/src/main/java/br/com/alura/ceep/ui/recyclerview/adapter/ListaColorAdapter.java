@@ -96,7 +96,7 @@ public class ListaColorAdapter extends RecyclerView.Adapter<ViewHolder> {
                         return;
                     }
 
-                    onItemClickListener.onItemClick(colorEnum, getBindingAdapterPosition());
+                    onItemClickListener.onItemClick(colorEnum);
                 }
             });
         }

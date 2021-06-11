@@ -23,7 +23,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     private final LayoutInflater inflater;
     private OnItemClickListener<Nota> onItemClickListener;
 
-    public ListaNotasAdapter(Context context, List<Nota> notas) {
+    public ListaNotasAdapter(@NonNull Context context, @NonNull List<Nota> notas) {
 
         this.context = context;
         this.notas = notas;
@@ -44,7 +44,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     }
 
     @Override
-    public void onBindViewHolder(ListaNotasAdapter.NotaViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListaNotasAdapter.NotaViewHolder holder, int position) {
 
         Nota nota = notas.get(position);
         holder.vincula(nota);
@@ -58,29 +58,58 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
 
     public void adiciona(Nota nota) {
 
-        notas.add(nota);
-        notifyDataSetChanged();
+        incrementaPosicoes();
+
+        this.notas.add(nota.getPosicao(), nota);
+
+        notifyItemInserted(nota.getPosicao());
     }
 
-    public void altera(int posicao, Nota nota) {
+    public void altera(Nota nota) {
 
-        notas.set(posicao, nota);
-        notifyDataSetChanged();
+        this.notas.set(nota.getPosicao(), nota);
+
+        notifyItemChanged(nota.getPosicao());
     }
 
-    public void remove(int posicao) {
+    public void remove(Nota nota) {
 
-        notas.remove(posicao);
-        notifyItemRemoved(posicao);
+        this.notas.remove(nota);
+
+        notifyItemRemoved(nota.getPosicao());
+
+        decrementarPocisoes(nota);
     }
 
-    public void troca(int posicaoInicial, int posicaoFinal) {
+    public void troca(Nota notaPosicaoInicial, Nota notaPosicaoPara) {
 
-        Collections.swap(notas, posicaoInicial, posicaoFinal);
-        notifyItemMoved(posicaoInicial, posicaoFinal);
+        Collections.swap(notas, notaPosicaoInicial.getPosicao(), notaPosicaoPara.getPosicao());
+
+        notifyItemMoved(notaPosicaoInicial.getPosicao(), notaPosicaoPara.getPosicao());
     }
 
-    class NotaViewHolder extends RecyclerView.ViewHolder {
+    private void decrementarPocisoes(Nota notaBase) {
+
+        for (Nota nota : notas) {
+
+            if (nota.getPosicao() < notaBase.getPosicao()) {
+
+                continue;
+            }
+
+            nota.setPosicao(nota.getPosicao() - 1);
+        }
+    }
+
+    private void incrementaPosicoes() {
+
+        for (Nota nota : notas) {
+
+            nota.setPosicao(nota.getPosicao() + 1);
+        }
+    }
+
+    public class NotaViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView titulo;
         private final TextView descricao;
@@ -99,7 +128,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
                 @Override
                 public void onClick(View view) {
 
-                    onItemClickListener.onItemClick(nota, getBindingAdapterPosition());
+                    onItemClickListener.onItemClick(nota);
                 }
             });
         }
@@ -118,6 +147,11 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
             descricao.setText(nota.getDescricao());
 
             constraintLayout.setBackgroundColor(context.getResources().getColor(nota.getColor().getColorRes()));
+        }
+
+        public Nota getNota() {
+
+            return nota;
         }
     }
 

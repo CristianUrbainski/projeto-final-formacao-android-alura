@@ -1,8 +1,6 @@
 package br.com.alura.ceep.ui.activity;
 
 import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
-import static br.com.alura.ceep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
 
 import br.com.alura.ceep.R;
 import br.com.alura.ceep.model.Nota;
@@ -22,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class FormularioNotaActivity extends AppCompatActivity {
 
-    private int posicaoRecibida = POSICAO_INVALIDA;
     private Nota nota;
     private TextView titulo;
     private TextView descricao;
@@ -46,9 +43,6 @@ public class FormularioNotaActivity extends AppCompatActivity {
             setTitle(R.string.altera_nota);
 
             nota = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
-
-            posicaoRecibida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
-
         } else {
 
             nota = new Nota();
@@ -104,7 +98,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
 
         coresAdapter.setOnItemClickListener(new OnItemClickListener<ColorEnum>() {
             @Override
-            public void onItemClick(ColorEnum colorEnum, int posicao) {
+            public void onItemClick(ColorEnum colorEnum) {
 
                 nota.setColor(colorEnum);
 
@@ -119,7 +113,6 @@ public class FormularioNotaActivity extends AppCompatActivity {
 
         Intent resultadoInsercao = new Intent();
         resultadoInsercao.putExtra(CHAVE_NOTA, nota);
-        resultadoInsercao.putExtra(CHAVE_POSICAO, posicaoRecibida);
 
         setResult(Activity.RESULT_OK, resultadoInsercao);
     }
