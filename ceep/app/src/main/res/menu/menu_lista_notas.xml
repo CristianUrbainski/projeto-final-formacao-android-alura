@@ -12,4 +12,9 @@
             android:icon="@drawable/ic_action_lista"
             app:showAsAction="always"/>
 
+    <item android:id="@+id/menu_lista_notas_ic_feedback"
+            android:title="@string/feedback"
+            android:icon="@drawable/ic_action_help"
+            app:showAsAction="always"/>
+
 </menu>

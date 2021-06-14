@@ -97,6 +97,13 @@ public class ListaNotasActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        if (item.getItemId() == R.id.menu_lista_notas_ic_feedback) {
+
+            FeedbackActivity.newInstance(this);
+
+            return true;
+        }
+
         ListaNotasViewLayoutEnum layoutView = null;
 
         if (item.getItemId() == R.id.menu_lista_notas_ic_grid) {
